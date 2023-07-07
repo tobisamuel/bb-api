@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PARENT
+  BABYSITTER
+}
+
+model User {
+  id             String      @id @default(uuid())
+  email          String      @unique
+  password       String
+  firstName      String
+  lastName       String
+  phoneNumber    String?
+  profilePicture String?
+  addressLine    String?
+  city           String?
+  state          String?
+  zipCode        String?
+  dateOfBirth    DateTime?
+  role           UserRole    @default(PARENT)
+  babysitter     Babysitter?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  bookings       Booking[]
+}
+
+model Babysitter {
+  id                String    @id @default(uuid())
+  bio               String
+  hourlyRate        Float
+  availableDays     String[]
+  isBooked          Boolean   @default(false)
+  averageRating     Float
+  preferredAgeGroup String[]
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id])
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  bookings          Booking[]
+}
+
+enum BookingStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model Booking {
+  id                  String        @id @default(uuid())
+  startTime           DateTime
+  endTime             DateTime
+  notes               String?
+  status              BookingStatus @default(PENDING)
+  specialInstructions String?
+  paymentAmount       Float
+  cancellationReason  String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  parentId            String
+  parent              User          @relation(fields: [parentId], references: [id])
+  babysitterId        String
+  babysitter          Babysitter    @relation(fields: [babysitterId], references: [id])
+  review              Review?
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+}
