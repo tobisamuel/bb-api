@@ -4,9 +4,6 @@
     "outDir": "dist",
     "lib": ["esnext"],
     "esModuleInterop": true,
-    "strict": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "strict": true
   }
 }

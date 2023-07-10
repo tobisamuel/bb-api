@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import type { User } from "@prisma/client";
 
-import environment from "@/config/environment";
+import environment from "../config/environment";
 
 interface RequestWithUserRole extends Request {
   user?: {};
